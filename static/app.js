@@ -3,15 +3,29 @@ $(function () {
         //remove li from dom
         $(`#msg-${res}`).remove()
     }
-    
+
     function handleLikeMessage(res) {
         $(`#like-${res.msgId}`).toggleClass("fas far")
         $(`#${res.msgId}-num-likes`).text(`${res.likes}`)
     }
-    
+
     function handleFollow(res) {
         console.log(res);
-        
+
+    }
+
+    function handleSearchUpdate(res) {
+
+        $('#search-list').empty()
+
+        //append usernames dom element to search drop down
+        for (let item of res) {
+
+            let domEl = $(`<a href="/users/${item[1]}" class="dropdown-item"><small>${item[0]}</small></a>`)
+
+            $('#search-list').append(domEl)
+        }
+
     }
 
     $('[data-toggle="tooltip"]').tooltip()
@@ -33,14 +47,14 @@ $(function () {
 
     $('.like-btn').on('click', (e) => {
         e.preventDefault()
-        
+
         //get message_id
         msg_id = e.target.getAttribute('data-msg')
-        
+
         data = {
             "msg-id": msg_id
         }
-        
+
         //post request to like end point
         $.ajax({
             type: "POST",
@@ -50,13 +64,13 @@ $(function () {
             success: handleLikeMessage
         })
     })
-    
+
     $('.follow-btn').on('click', (e) => {
         e.preventDefault()
-        
+
         followee_id = e.target.getAttribute('data-msg')
         console.log(e.target);
-        
+
         //post request to like end point
         $.ajax({
             type: "POST",
@@ -64,6 +78,29 @@ $(function () {
             success: handleFollow
         })
     })
+
+    // hook up search field to fire request on change
+    $('#search').on('keyup', (e) => {
+        let searchWord = e.target.value
+
+        if (searchWord === '') return
+
+        data = {
+            "prefix": searchWord
+        }
+
+        //fire post request to autocomplete endpoint
+        $.ajax({
+            type: "POST",
+            url: `/autocomplete`,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: handleSearchUpdate
+        })
+
+        //update response to pop down
+    })
+
 })
 
 

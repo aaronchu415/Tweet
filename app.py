@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from itertools import chain
+from autocompletetrie import AutoCompleteTrie
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
 from models import db, connect_db, User, Message, Like
@@ -26,6 +27,7 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 
+
 ##############################################################################
 # User signup/login/logout
 
@@ -45,7 +47,6 @@ def do_login(user):
     """Log in user."""
 
     session[CURR_USER_KEY] = user.id
-
 
 def do_logout():
     """Logout user."""
@@ -160,6 +161,33 @@ def render_likes_page():
     return render_template('/users/likes.html', messages=messages, user=g.user)
 
 
+##############################################################################
+# search route:
+
+@app.route('/autocomplete', methods=['POST'])
+def returns_list_of_users():
+    """returns Json of list of users that matches prefix
+    """
+
+    prefix = request.json.get('prefix')
+
+    user_names_id = User.query.with_entities(User.username,User.id).all()
+
+    ## create dictionary to look up id 
+    user_names_id_dict = {}
+    for username,u_id in user_names_id:
+        user_names_id_dict[username] = u_id
+    
+    user_names = [u[0] for u in user_names_id]
+
+    tri = AutoCompleteTrie()
+
+    tri.add_words_to_trie(user_names)
+    results = tri.autocomplete(prefix)
+    results = [ (username,user_names_id_dict.get(username)) for username in results]
+    print(results)
+
+    return jsonify(results)
 
 ##############################################################################
 # General user routes:
