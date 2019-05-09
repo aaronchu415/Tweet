@@ -268,7 +268,8 @@ def add_follow(follow_id):
         "isFollowing": g.user.is_following(followee)
     }
 
-    return jsonify(load)
+    return redirect(request.referrer)
+    # return jsonify(load)
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
@@ -403,7 +404,6 @@ def messages_destroy(message_id):
 
     db.session.delete(msg)
     db.session.commit()
-
 
     return jsonify(message_id)
 
