@@ -28,6 +28,12 @@ $(function () {
 
     }
 
+    function handleCommentSuccess(res) {
+        $('#commentModalLong').modal('hide')
+        $('#comment-form').trigger('reset')
+    }
+
+
     $('[data-toggle="tooltip"]').tooltip()
 
     // hook up delete button 

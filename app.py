@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from itertools import chain
 from autocompletetrie import AutoCompleteTrie
 
-from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message, Like
+from forms import UserAddForm, LoginForm, MessageForm, EditUserForm, CommentForm
+from models import db, connect_db, User, Message, Like, Comment
 
 CURR_USER_KEY = "curr_user"
 
@@ -26,11 +26,8 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
-
-
 ##############################################################################
 # User signup/login/logout
-
 
 @app.before_request
 def add_user_to_g():
@@ -223,6 +220,7 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
+
     return render_template('users/show.html', user=user, messages=messages)
 
 
@@ -230,10 +228,10 @@ def users_show(user_id):
 def show_following(user_id):
     """Show list of people this user is following."""
 
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-
     user = User.query.get_or_404(user_id)
     return render_template('users/following.html', user=user)
 
@@ -331,6 +329,24 @@ def delete_user():
 
 
 ##############################################################################
+# Comment routes:
+
+
+@app.route('/messages/comments', methods=["POST"])
+def add_comment():
+    """ add comment to message """
+
+    msg_id = request.json.get('msgId')
+    text = request.json.get('text')
+
+    comment = Comment(text=text, message_id=msg_id, user_id=g.user.id)
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify(comment.serialize())
+
+
+##############################################################################
 # Messages routes:
 
 @app.route('/messages/new', methods=["GET", "POST"])
@@ -356,9 +372,17 @@ def messages_add():
     return render_template('messages/new.html', form=form)
 
 
-@app.route('/messages/<int:message_id>', methods=["GET"])
+@app.route('/messages/<int:message_id>', methods=["GET", "POST"])
 def messages_show(message_id):
     """Show a message."""
+
+    if request.method == "POST":
+        msg = Message.query.get(message_id)
+        # print(f'*****************\n{[c.serialize() for c in msg.comments]}\n*****************')
+        serialized_msg = msg.serialize()
+        serialized_msg['comments'] = [c.serialize() for c in msg.comments]
+        print(f'*****************\n{serialized_msg}\n*****************')
+        return jsonify(serialized_msg)
 
     msg = Message.query.get_or_404(message_id)
     return render_template('messages/show.html', message=msg)

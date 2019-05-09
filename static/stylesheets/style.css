@@ -1,7 +1,7 @@
 /* ====================== General */
 
 body {
-  background-color: #e6ecf0;
+  background-color:#002B35
 }
 
 body.error-404 {
@@ -23,7 +23,7 @@ body.error-404 {
 /* ======================= Nav */
 
 .navbar {
-  background-color: #fff;
+  background-color: black;
   height: 46px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
   margin-bottom: 1rem;
@@ -139,7 +139,7 @@ nav form.navbar-form {
 }
 
 .onboarding {
-  background-color: #fff;
+  background-color: black;
 }
 
 @media (max-width: 468px) {
@@ -241,7 +241,7 @@ nav + .container {
 }
 
 .row.full-width {
-  background-color: #fff;
+  background-color: black;
   margin-top: -80px;
   margin-bottom: 1rem;
   border-bottom: 1px solid #ccc;
@@ -337,13 +337,13 @@ nav + .container {
   border-radius: 5px;
   border: 1px solid #ccc;
   position: relative;
-  background: white;
+  /* background: white; */
   margin-top: 20px;
 }
 
 .user-card > div {
   position: absolute;
-  background: white;
+  /* background: white; */
 }
 
 .user-card form {
@@ -546,13 +546,13 @@ p.card-bio {
 /* ================================ 404 page */
 
 .message-404 {
-  color: white;
+  color: #B58901;
   margin-top: 2em;
   text-align: center;
 }
 
 .message-404 a {
-  color: white;
+  color: #B58901;
 }
 
 .message-404 > h4.display-4 {
