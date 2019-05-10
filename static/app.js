@@ -11,7 +11,24 @@ $(function () {
   }
 
   function handleFollow(res) {
-    console.log(res);
+
+    $(`#user-${res.followeeId}`).toggleClass("btn-outline-primary btn-primary");
+
+    if (res.isFollowing) {
+      $(`#user-${res.followeeId}`).text('Unfollow');
+    } else {
+      $(`#user-${res.followeeId}`).text('Follow');
+    }
+    //   $(`#user-${res.msgId}`).toggleClass("fas far");
+    //   $(`#${res.msgId}-num-likes`).text(`${res.likes}`);
+
+    //   user - {{ user.id }
+    // }
+
+    // load = {
+    //   "followeeId": followee.id,
+    //   "isFollowing": g.user.is_following(followee)
+    // }
 
   }
 
@@ -72,11 +89,11 @@ $(function () {
     });
   });
 
+
   $('.follow-btn').on('click', (e) => {
     e.preventDefault();
 
     followee_id = e.target.getAttribute('data-msg');
-    console.log(e.target);
 
     //post request to like end point
     $.ajax({

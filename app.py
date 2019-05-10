@@ -268,8 +268,8 @@ def add_follow(follow_id):
         "isFollowing": g.user.is_following(followee)
     }
 
-    return redirect(request.referrer)
-    # return jsonify(load)
+    # return redirect(request.referrer)
+    return jsonify(load)
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
